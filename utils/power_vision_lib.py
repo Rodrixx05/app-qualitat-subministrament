@@ -4,12 +4,13 @@ import os
 import datetime
 import plotly.express as px
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import pickle
 
 with open(os.path.join(os.path.dirname(__file__), 'trad_columns.pkl'), 'rb') as file:
     trad_columns = pickle.load(file)
 
-def taula_tensio_simple_resum(df, llengua = 'cat'):
+def _taula_tensio_simple(df, llengua = 'cat'):
     columnes_original = ['tensio_1', 'tensio_2', 'tensio_3', 'tensio_tri_fn']
     columnes = ['L1 (V)', 'L2 (V)', 'L3 (V)', 'Tri (V)']
     index_cat = ['Mitjana', 'Màxim', 'Mínim']
@@ -25,17 +26,15 @@ def taula_tensio_simple_resum(df, llengua = 'cat'):
         df_final.index = index_cas
     else:
         df_final.index = index_cat
-        
-        df_final.reset_index(names = '', inplace = True)
 
-    taula = go.Figure(data = [go.Table(
-        header = dict(values = list(df_final.columns),
-                        align = 'center'),
-        cells = dict(values = [df_final[col] for col in df_final.columns],
-                        align = 'center')
-    )])
-    taula.update_layout(height = len(df_final) * 35, margin=dict(r=5, l=5, t=5, b=5))
-    return taula
+    return df_final
+
+def taula_tensio_simple_resum(df, llengua = 'cat'):
+    df_final = _taula_tensio_simple(df, llengua)
+    df_final.reset_index(names = '', inplace = True)
+
+    return df_final
+
 
 def taula_tensio_simple_desviacions(df, llengua = 'cat'):
     columnes_original = ['tensio_1', 'tensio_2', 'tensio_3', 'tensio_tri_fn']
@@ -58,21 +57,14 @@ def taula_tensio_simple_desviacions(df, llengua = 'cat'):
     
     df_final.reset_index(names = '', inplace = True)
 
-    taula = go.Figure(data = [go.Table(
-        header = dict(values = list(df_final.columns),
-                        align = 'center'),
-        cells = dict(values = [df_final[col] for col in df_final.columns],
-                        align = 'center')
-    )])
-    taula.update_layout(height = len(df_final) * 35, margin=dict(r=5, l=5, t=5, b=5))
-    return taula
+    return df_final
 
 def taula_tensio_simple_desequilibris(df, llengua = 'cat'):
     columnes_original = ['tensio_l1', 'tensio_l2', 'tensio_l3', 'tensio_tri_fn']
     columnes = ['L1 (%)', 'L2 (%)', 'L3 (%)', 'Tri (%)']
     index = 'Media' if llengua == 'cas' else 'Mitjana'
     
-    resum_df = taula_tensio_simple_resum(df, llengua)
+    resum_df = _taula_tensio_simple(df, llengua)
     mitjana = np.mean(resum_df.loc[index])
     
     serie_final = round((resum_df.loc[index] / mitjana - 1) * 100, 2)
@@ -82,17 +74,10 @@ def taula_tensio_simple_desequilibris(df, llengua = 'cat'):
     
     df_final.reset_index(names = '', inplace = True)
 
-    taula = go.Figure(data = [go.Table(
-        header = dict(values = list(df_final.columns),
-                        align = 'center'),
-        cells = dict(values = [df_final[col] for col in df_final.columns],
-                        align = 'center')
-    )])
-    taula.update_layout(height = len(df_final) * 35, margin=dict(r=5, l=5, t=5, b=5))
-    return taula
+    return df_final
 
 
-def taula_tensio_composta_resum(df, llengua = 'cat'):
+def _taula_tensio_composta(df, llengua = 'cat'):
     columnes_original = ['tensio_1_2', 'tensio_2_3', 'tensio_3_1', 'tensio_tri_ff']
     columnes = ['L1-L2 (V)', 'L2-L3 (V)', 'L3-L1 (V)', 'Tri (V)']
     index_cat = ['Mitjana', 'Màxim', 'Mínim']
@@ -108,17 +93,14 @@ def taula_tensio_composta_resum(df, llengua = 'cat'):
         df_final.index = index_cas
     else:
         df_final.index = index_cat
-        
-        df_final.reset_index(names = '', inplace = True)
+    
+    return df_final
 
-    taula = go.Figure(data = [go.Table(
-        header = dict(values = list(df_final.columns),
-                        align = 'center'),
-        cells = dict(values = [df_final[col] for col in df_final.columns],
-                        align = 'center')
-    )])
-    taula.update_layout(height = len(df_final) * 35, margin=dict(r=5, l=5, t=5, b=5))
-    return taula
+def taula_tensio_composta_resum(df, llengua = 'cat'):
+    df_final = _taula_tensio_composta(df, llengua)
+    df_final.reset_index(names = '', inplace = True)
+
+    return df_final
 
 def taula_tensio_composta_desviacions(df, llengua = 'cat'):
     columnes_original = ['tensio_1_2', 'tensio_2_3', 'tensio_3_1', 'tensio_tri_ff']
@@ -139,23 +121,16 @@ def taula_tensio_composta_desviacions(df, llengua = 'cat'):
     else:
         df_final.index = index_cat
 
-        df_final.reset_index(names = '', inplace = True)
+    df_final.reset_index(names = '', inplace = True)
 
-    taula = go.Figure(data = [go.Table(
-        header = dict(values = list(df_final.columns),
-                        align = 'center'),
-        cells = dict(values = [df_final[col] for col in df_final.columns],
-                        align = 'center')
-    )])
-    taula.update_layout(height = len(df_final) * 35, margin=dict(r=5, l=5, t=5, b=5))
-    return taula
+    return df_final
 
 def taula_tensio_composta_desequilibris(df, llengua = 'cat'):
     columnes_original = ['tensio_1_2', 'tensio_2_3', 'tensio_3_1', 'tensio_tri_ff']
     columnes = ['L1-L2 (%)', 'L2-L3 (%)', 'L3-L1 (%)', 'Tri (%)']
     index = 'Media' if llengua == 'cas' else 'Mitjana'
     
-    resum_df = taula_tensio_composta_resum(df, llengua)
+    resum_df = _taula_tensio_composta(df, llengua)
     mitjana = np.mean(resum_df.loc[index])
     
     serie_final = round((resum_df.loc[index] / mitjana - 1) * 100, 2)
@@ -165,21 +140,14 @@ def taula_tensio_composta_desequilibris(df, llengua = 'cat'):
     
     df_final.reset_index(names = '', inplace = True)
 
-    taula = go.Figure(data = [go.Table(
-        header = dict(values = list(df_final.columns),
-                        align = 'center'),
-        cells = dict(values = [df_final[col] for col in df_final.columns],
-                        align = 'center')
-    )])
-    taula.update_layout(height = len(df_final) * 35, margin=dict(r=5, l=5, t=5, b=5))
-    return taula
+    return df_final
 
 def taula_potencies_cos_fi(df, llengua = 'cat'):
     columnes_original = ['pot_act_tri', 'pot_apa_tri']
     if llengua == 'cas':
-        columnes = ['P. Activa (kW)', 'P. Aparente (kVA)', 'cos(' + r'$\phi$' + ')']
+        columnes = ['P. Activa (kW)', 'P. Aparente (kVA)', 'cos(' + '\u03C6' + ')']
     else:
-        columnes = ['P. Activa (kW)', 'P. Aparent (kVA)', 'cos(' + r'$\phi$' + ')']
+        columnes = ['P. Activa (kW)', 'P. Aparent (kVA)', 'cos(' + '\u03C6' + ')']
     index = 'Media' if llengua == 'cas' else 'Mitjana'
     
     serie_final = np.mean(df[columnes_original])
@@ -187,18 +155,11 @@ def taula_potencies_cos_fi(df, llengua = 'cat'):
     serie_final.index = columnes
     
     df_final = pd.DataFrame(round(serie_final, 2)).transpose()
-    df_final.index = ['Mitjana']
+    df_final.index = [index]
     
     df_final.reset_index(names = '', inplace = True)
 
-    taula = go.Figure(data = [go.Table(
-        header = dict(values = list(df_final.columns),
-                        align = 'center'),
-        cells = dict(values = [df_final[col] for col in df_final.columns],
-                        align = 'center')
-    )])
-    taula.update_layout(height = len(df_final) * 35, margin=dict(r=5, l=5, t=5, b=5))
-    return taula
+    return df_final
 
 def taula_corrent_resum(df, llengua = 'cat'):
     columnes_original = ['corrent_1', 'corrent_2', 'corrent_3', 'corrent_n']
@@ -219,14 +180,7 @@ def taula_corrent_resum(df, llengua = 'cat'):
         
     df_final.reset_index(names = '', inplace = True)
 
-    taula = go.Figure(data = [go.Table(
-        header = dict(values = list(df_final.columns),
-                        align = 'center'),
-        cells = dict(values = [df_final[col] for col in df_final.columns],
-                        align = 'center')
-    )])
-    taula.update_layout(height = len(df_final) * 35, margin=dict(r=5, l=5, t=5, b=5))
-    return taula
+    return df_final
 
 def taula_corrent_desequilibris(df, llengua = 'cat'):
     columnes_original = ['corrent_1', 'corrent_2', 'corrent_3']
@@ -250,14 +204,7 @@ def taula_corrent_desequilibris(df, llengua = 'cat'):
     
     df_final.reset_index(names = '', inplace = True)
 
-    taula = go.Figure(data = [go.Table(
-        header = dict(values = list(df_final.columns),
-                        align = 'center'),
-        cells = dict(values = [df_final[col] for col in df_final.columns],
-                        align = 'center')
-    )])
-    taula.update_layout(height = len(df_final) * 35, margin=dict(r=5, l=5, t=5, b=5))
-    return taula
+    return df_final
 
 def grafic_tensio_simple(df, llengua = 'cat', data_inici = None, data_final = None):
     columnes_original = ['tensio_1', 'tensio_2', 'tensio_3', 'tensio_tri_fn']
@@ -292,7 +239,7 @@ def grafic_tensio_composta(df, llengua = 'cat', data_inici = None, data_final = 
     if llengua == 'cas':
         eixos = {'value': 'Tensión compuesta (V)', 'dia_hora': 'Fecha', 'variable': 'Leyenda'}
     else:
-        eixos = {'value': 'Tensió compuesta (V)', 'dia_hora': 'Data', 'variable': 'Llegenda'}
+        eixos = {'value': 'Tensió composta (V)', 'dia_hora': 'Data', 'variable': 'Llegenda'}
     
     variables = {'tensio_1_2': 'L1-L2', 'tensio_2_3': 'L2-L3', 'tensio_3_1': 'L3-L1', 'tensio_tri_ff': 'Tri'}
     
@@ -419,19 +366,28 @@ def grafic_har_corrent_frequencia(df, llengua = 'cat', data_inici = None, data_f
     if data_final is None:
         data_final_dt = max(df['dia_hora'])
     else:
-        data_final_dt = datetime.datetime.strptime(data_final, '%d/%m/%Y')   
-        
+        data_final_dt = datetime.datetime.strptime(data_final, '%d/%m/%Y')
+    
+    grafic = make_subplots(rows = len(columnes_original), cols = 1, subplot_titles = ('L1', 'L2', 'L3'))
+    titol = f'Evolución de los armónicos de corriente' if llengua == 'cas' else f'Evolució dels harmònics de corrent'
+
     for index, linia in enumerate(columnes_original):   
-        titol = f'Evolución de los armónicos de corriente de L{index + 1}' if llengua == 'cas' else f'Evolució dels harmònics de corrent de L{index + 1}'
+
         if llengua == 'cas':
             eixos = {'value': 'Intensidad del armónico (%I)', 'dia_hora': 'Fecha', 'variable': 'Leyenda'}
         else:
             eixos = {'value': "Intensitat de l'harmonic (%I)", 'dia_hora': 'Data', 'variable': 'Llegenda'}
             variables = {f'har_2_i{index + 1}': 'Harmònic 2', f'har_3_i{index + 1}': 'Harmònic 3', f'har_4_i{index + 1}': 'Harmònic 4', f'har_5_i{index + 1}': 'Harmònic 5'}
 
-        grafic = px.line(data_frame = df, x = 'dia_hora', y = linia, title = titol, labels = eixos, range_x = [data_inici_dt, data_final_dt], color_discrete_sequence = colors)
-        grafic.for_each_trace(lambda t: t.update(name = variables[t.name]))
-        grafic.show()
+        for color, harmonic in enumerate(linia):
+            grafic.add_trace(go.Scatter(x = df['dia_hora'], y = df[harmonic], mode = 'lines', name = variables[harmonic], line = dict(color = colors[color]), legendgroup = index, legendgrouptitle = dict(text = 'Llegenda')), row = index + 1, col = 1)
+        
+        grafic.update_yaxes(title_text = eixos['value'], row = index + 1, col = 1)
+        grafic.update_xaxes(title_text = eixos['value'], row = index + 1, col = 1)
+    
+    grafic.update_layout(xaxis_range = [data_inici_dt, data_final_dt], title_text = titol, legend_tracegroupgap = 360)
+
+    return grafic
 
 def grafic_corrents(df, llengua = 'cat', data_inici = None, data_final = None):
     columnes_original = ['corrent_1', 'corrent_2', 'corrent_3', 'corrent_n']
