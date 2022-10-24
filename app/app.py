@@ -4,8 +4,6 @@ import utils.app_lib as lib
 from dash import Dash, dcc, html, Input, Output, State, MATCH
 import dash_bootstrap_components as dbc
 
-import plotly.graph_objects as go
-
 from datetime import datetime, timedelta
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.CERULEAN])
@@ -178,4 +176,4 @@ def actualitzar_dates(start_date, end_date, figure):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=False)
