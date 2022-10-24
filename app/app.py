@@ -9,6 +9,7 @@ import plotly.graph_objects as go
 from datetime import datetime, timedelta
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.CERULEAN])
+server = app.server
 
 app.layout = html.Div([
     dbc.Row(dbc.Col(html.H1('Informe de qualitat de subministrament elèctric', style = {'textAlign': 'center', 'margin-bottom': '30px'}))),
