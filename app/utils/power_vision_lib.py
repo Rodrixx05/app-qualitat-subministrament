@@ -62,15 +62,16 @@ def taula_tensio_simple_desviacions(df, llengua = 'cat'):
 def taula_tensio_simple_desequilibris(df, llengua = 'cat'):
     columnes_original = ['tensio_l1', 'tensio_l2', 'tensio_l3', 'tensio_tri_fn']
     columnes = ['L1 (%)', 'L2 (%)', 'L3 (%)', 'Tri (%)']
-    index = 'Media' if llengua == 'cas' else 'Mitjana'
+    index_resum = 'Media' if llengua == 'cas' else 'Mitjana'
+    index = 'Desequilibrio' if llengua == 'cas' else 'Desequilibri'
     
     resum_df = _taula_tensio_simple(df, llengua)
-    mitjana = np.mean(resum_df.loc[index])
+    mitjana = np.mean(resum_df.loc[index_resum])
     
-    serie_final = round((resum_df.loc[index] / mitjana - 1) * 100, 2)
+    serie_final = round((resum_df.loc[index_resum] / mitjana - 1) * 100, 2)
     df_final = pd.DataFrame(serie_final).transpose()
     df_final.columns = columnes
-    df_final.index = ['Desequilibri']
+    df_final.index = [index]
     
     df_final.reset_index(names = '', inplace = True)
 
@@ -128,15 +129,16 @@ def taula_tensio_composta_desviacions(df, llengua = 'cat'):
 def taula_tensio_composta_desequilibris(df, llengua = 'cat'):
     columnes_original = ['tensio_1_2', 'tensio_2_3', 'tensio_3_1', 'tensio_tri_ff']
     columnes = ['L1-L2 (%)', 'L2-L3 (%)', 'L3-L1 (%)', 'Tri (%)']
-    index = 'Media' if llengua == 'cas' else 'Mitjana'
+    index_resum = 'Media' if llengua == 'cas' else 'Mitjana'
+    index = 'Desequilibrio' if llengua == 'cas' else 'Desequilibri'
     
     resum_df = _taula_tensio_composta(df, llengua)
-    mitjana = np.mean(resum_df.loc[index])
+    mitjana = np.mean(resum_df.loc[index_resum])
     
-    serie_final = round((resum_df.loc[index] / mitjana - 1) * 100, 2)
+    serie_final = round((resum_df.loc[index_resum] / mitjana - 1) * 100, 2)
     df_final = pd.DataFrame(serie_final).transpose()
     df_final.columns = columnes
-    df_final.index = ['Desequilibri']
+    df_final.index = [index]
     
     df_final.reset_index(names = '', inplace = True)
 
@@ -185,7 +187,7 @@ def taula_corrent_resum(df, llengua = 'cat'):
 def taula_corrent_desequilibris(df, llengua = 'cat'):
     columnes_original = ['corrent_1', 'corrent_2', 'corrent_3']
     columnes = ['L1-L2 (%)', 'L2-L3 (%)', 'L3-L1 (%)']
-    index = 'Media' if llengua == 'cas' else 'Mitjana'
+    index = 'Desequilibrio' if llengua == 'cas' else 'Desequilibri'
     
     df_inicial = df[columnes_original].copy()
     for index_fila, row in df_inicial.iterrows():
@@ -200,7 +202,7 @@ def taula_corrent_desequilibris(df, llengua = 'cat'):
     serie_final.index = columnes
     
     df_final = pd.DataFrame(round(serie_final, 2)).transpose()
-    df_final.index = ['Desequilibri']
+    df_final.index = [index]
     
     df_final.reset_index(names = '', inplace = True)
 
@@ -377,10 +379,10 @@ def grafic_har_corrent_frequencia(df, llengua = 'cat', data_inici = None, data_f
             eixos = {'value': 'Intensidad del armónico (%I)', 'dia_hora': 'Fecha', 'variable': 'Leyenda'}
         else:
             eixos = {'value': "Intensitat de l'harmonic (%I)", 'dia_hora': 'Data', 'variable': 'Llegenda'}
-            variables = {f'har_2_i{index + 1}': 'Harmònic 2', f'har_3_i{index + 1}': 'Harmònic 3', f'har_4_i{index + 1}': 'Harmònic 4', f'har_5_i{index + 1}': 'Harmònic 5'}
+        variables = {f'har_2_i{index + 1}': 'Harmònic 2', f'har_3_i{index + 1}': 'Harmònic 3', f'har_4_i{index + 1}': 'Harmònic 4', f'har_5_i{index + 1}': 'Harmònic 5'}
 
         for color, harmonic in enumerate(linia):
-            grafic.add_trace(go.Scatter(x = df['dia_hora'], y = df[harmonic], mode = 'lines', name = variables[harmonic], line = dict(color = colors[color]), legendgroup = index, legendgrouptitle = dict(text = 'Llegenda')), row = index + 1, col = 1)
+            grafic.add_trace(go.Scatter(x = df['dia_hora'], y = df[harmonic], mode = 'lines', name = variables[harmonic], line = dict(color = colors[color]), legendgroup = index, legendgrouptitle = dict(text = eixos['variable'])), row = index + 1, col = 1)
         
         grafic.update_yaxes(title_text = eixos['value'], row = index + 1, col = 1)
         grafic.update_xaxes(title_text = eixos['value'], row = index + 1, col = 1)

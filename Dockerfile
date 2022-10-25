@@ -14,4 +14,4 @@ COPY /app /usr/src/app/
 
 EXPOSE 8080
 
-CMD ["gunicorn", "--workers = 3", "--threads = 1", "-b 0.0.0.0:8080", "app:server"]
+CMD ["gunicorn", "--workers", "3", "--threads", "1", "-b", "0.0.0.0:8080", "app:server"]
